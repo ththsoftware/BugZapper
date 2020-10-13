@@ -1,0 +1,91 @@
+Project Plan:  BugZapper
+
+1. Introduction
+
+	This document lays out a project plan for the development of “BugZapper” ASP.NET Core Bug Tracker by Thomas Thompson.
+
+	The intended readers of this document are developers(Myself) working on “BugZapper” and future prospective employers. The plan will include, but is not restricted to, a summary of the system functionality, the scope of the project from the perspective of the “BugZapper” team (Myself), scheduling and delivery estimates, project risks and how those risks will be mitigated, the process by which I will develop the project, and metrics and measurements that will be recorded throughout the project.
+
+	Here I would like to emphasise that this is in no way a project that is intended to be sold as a production solution, this project is a demonstration project. I personally will utilize the funtionality of "BugZapper" to keep track of bugs on this project and future projects, these will show in the demo however writes to the demo will not write to a permanent database. 
+
+2. Overview
+
+	As project development progresses we need to begin the process of testing/QA to ensure a seamless UX for clients. This process brings to light errors in the code called "bugs" that need to be addressed by the development team. Bug Tracking systems help to orangize these bugs in tickets in a central location with high visibility to help the development team, and project managment team, ensure that errors are reloved in the most effiecient manner possible. This project is a web based application to complete this buisness use case.
+
+2.1 Customers
+
+	Any team, or individual, that is developing a project where tickets need to be processed. That being said this could be used as a general IT/Customer Service ticketing system with a few minor tweaks.
+
+
+2.2 Functionality
+
+	- Users will be able to create tickets and assign them to a project queue.
+	- Users will be able to edit their own ticket and add comments to the ticket.
+	- Team members(Other users) will be able to take ownership of these tickets and escalate to other teams or individuals.
+	- Various times will be recorded into the ticket metadata: creation time, time ownership was taken, completion time.
+	- Users will have two personalized views: my created tickets, and assigned to me.
+	- Upon ticket completion tickets will move to a special queue within the project for historical data to be kept for project documentation.
+
+
+2.3 Platform
+
+	BugZapper will be launched as an ASP.NET Core web application utilizing the MVC methodolgy.
+
+2.4 Development Responsibility
+
+	I, Thomas Thompson, am be developing the software and I am responsible for the creation of the Database and the web application.
+
+3. Goals and Scopes
+
+	- Admins should be able to create new users and assign them to projects as well as create new projects.
+	- Users should be able to edit their own ticket and add comments to the ticket.
+	- Ownership of a ticket should be highly mutable but only to assigned users in the project.
+	- Users should only be able to see projects to which they are assigned.
+	- Guest user will be a user that had read-only view of the entire project.
+
+
+4. Deliverables
+
+	I’ll deliver the following during the course of development:
+
+		- Initial UI Design/Implimentation
+		- Test Results
+		- Development document
+		- Source code
+
+5. Risk Management
+
+
+
+	5.1 Risk Identification
+
+		The following will be the risk involved in my project:
+
+			1.) There are already many established ticketing systems/ bug tracking systems in production.
+
+	5.2 Risk Mitigation
+
+		Creating a minimalistic, modern, and user friendly UI without distracting bells and whistles to create a positive UX.
+
+6. Scheduling and Estimates
+
+	Milestone	Description			Due Date
+	---------	-----------                     --------
+	1.)	        Application Design (Views)	October 14,2020			
+	2.)		Database (Models)		October 16, 2020		
+	3.)		Integrating Views and Models	October 17,2020
+			(Controllers)		
+	4.)		Testing				October 18, 2020	
+	5.)		Final release			October 20, 2020
+
+7. Technical Process
+
+	The following are the technologies that will be utilized to create each milestone:
+
+		- Framework: ASP.NET Core
+		
+		- Views: HTML, CSS, JavaScript, C#.
+
+		- Models: C#, MSSQL.
+
+		- Controllers: C#, JavaScript
