@@ -69,9 +69,7 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
-main-col-left {
-    border-right: 5px solid gray;
-}
-title-border-bottom {
-    border-bottom: 5px solid gray;
+
+.border-bottom-1 {
+    border-bottom: 1.5px solid #cedece;
 }
