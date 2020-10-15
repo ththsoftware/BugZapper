@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using BugZapper.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace BugZapper
 {
@@ -24,6 +26,8 @@ namespace BugZapper
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddDbContext<BugZapperContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BugZapperContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

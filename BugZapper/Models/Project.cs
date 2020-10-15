@@ -7,14 +7,7 @@ namespace BugZapper.Models
 {
     public class Project
     {
-        private string ProjectTitle { get; set; }
-        private string[] GetProjectTickets() 
-        {
-            return new string[2] { "These","Tickets"};
-        }
-        private string[] GetProjectUsers() 
-        {
-            return new string[2] { "My", "Users" };
-        }
+        public int Id { get; set; }
+        public string ProjectTitle { get; set; }
     }
 }

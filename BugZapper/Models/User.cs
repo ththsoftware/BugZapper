@@ -7,6 +7,7 @@ namespace BugZapper.Models
 {
     public class User
     {
+        public int Id { get; set; }
         private string UserName { get; set; }
         private int PermissionLevel { get; set; }
 

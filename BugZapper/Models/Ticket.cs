@@ -7,6 +7,7 @@ namespace BugZapper.Models
 {
     public class Ticket
     {
+        public int Id { get; set; }
         private readonly string TicketNumber;
         private string TicketOwner { get; set; }
         private readonly string CreatedBy;
