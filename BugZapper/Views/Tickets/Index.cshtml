@@ -20,6 +20,9 @@
                 @Html.DisplayNameFor(model => model.TicketOwner)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.CreatedDate)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.ClosedDate)
             </th>
             <th>
@@ -39,6 +42,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TicketOwner)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedDate)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ClosedDate)

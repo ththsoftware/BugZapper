@@ -54,7 +54,7 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id, UserName")] User user)
+        public async Task<IActionResult> Create([Bind("Id, UserName, PermissionLevel")] User user)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id, UserName")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id, UserName, PermissionLevel")] User user)
         {
             if (id != user.Id)
             {

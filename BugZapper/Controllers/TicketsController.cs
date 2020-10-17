@@ -54,7 +54,7 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,TicketSubject,TicketOwner,ClosedDate,TicketStatus,BugDescription")] Ticket ticket)
+        public async Task<IActionResult> Create([Bind("Id,TicketSubject,TicketOwner,CreatedBy,TicketStatus,BugDescription")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,TicketSubject,TicketOwner,ClosedDate,TicketStatus,BugDescription")] Ticket ticket)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,TicketSubject,TicketOwner,CreatedBy,TicketStatus,BugDescription")] Ticket ticket)
         {
             if (id != ticket.Id)
             {
