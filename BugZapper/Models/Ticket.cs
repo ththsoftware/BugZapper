@@ -12,7 +12,7 @@ namespace BugZapper.Models
     {
         public int Id { get; set; }
         [Display(Name = "Ticket Number")]
-        public string TicketNumber { get { return this.TicketNumber; } set { new string ("T-" + this.Id.ToString()); } }
+        public string TicketNumber { get; set; }
         [Display(Name = "Subject")]
         public string TicketSubject { get; set; }
         [Display(Name = "Owner")]
@@ -20,9 +20,9 @@ namespace BugZapper.Models
         [Display(Name = "Created By")]
         public string CreatedBy { get; set;}
         [Display(Name = "Creation Date")]
-        public string CreatedDate { get { return this.CreatedDate; } set { new DateTime().ToString(); } }
+        public DateTime CreatedDate;
         [Display(Name = "Closed Date")]
-        public string ClosedDate { get { return this.ClosedDate; } set { if (this.TicketStatus == "Closed") { new DateTime().ToString(); } else { new string ("N/A"); } } }
+        public string ClosedDate { get; set; }
         [Display(Name = "Status")]
         public string TicketStatus 
         {
@@ -31,5 +31,6 @@ namespace BugZapper.Models
         }
         [Display(Name = "Description")]
         public string BugDescription { get; set; }
+
     }
 }

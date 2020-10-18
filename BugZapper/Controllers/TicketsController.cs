@@ -13,6 +13,7 @@ namespace BugZapper.Controllers
     public class TicketsController : Controller
     {
         private readonly BugZapperContext _context;
+        private static int TicketEnumerator = 0;
 
         public TicketsController(BugZapperContext context)
         {
@@ -54,8 +55,17 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,TicketSubject,TicketOwner,CreatedBy,TicketStatus,BugDescription")] Ticket ticket)
+        public async Task<IActionResult> Create(Ticket ticket)
         {
+            ticket.CreatedDate = DateTime.Now;
+            if (ticket.TicketStatus.Equals("Closed")) 
+            {
+                ticket.ClosedDate = DateTime.Now.ToString();
+            } else
+            {
+                ticket.ClosedDate = "N/A";
+            }
+            ticket.TicketNumber = "T-" + (TicketEnumerator++);
             if (ModelState.IsValid)
             {
                 _context.Add(ticket);
@@ -86,11 +96,20 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,TicketSubject,TicketOwner,CreatedBy,TicketStatus,BugDescription")] Ticket ticket)
+        public async Task<IActionResult> Edit(int id, Ticket ticket)
         {
             if (id != ticket.Id)
             {
                 return NotFound();
+            }
+
+            if (ticket.TicketStatus.Equals("Closed"))
+            {
+                ticket.ClosedDate = DateTime.Now.ToString();
+            }
+            else
+            {
+                ticket.ClosedDate = "N/A";
             }
 
             if (ModelState.IsValid)
