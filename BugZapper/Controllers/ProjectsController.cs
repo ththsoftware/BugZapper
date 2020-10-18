@@ -34,7 +34,7 @@ namespace BugZapper.Controllers
             }
 
             var project = await _context.Project
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ProjectId == id);
             if (project == null)
             {
                 return NotFound();
@@ -54,7 +54,7 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ProjectTitle")] Project project)
+        public async Task<IActionResult> Create([Bind("ProjectId,ProjectTitle")] Project project)
         {
             if (ModelState.IsValid)
             {
@@ -86,9 +86,9 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProjectTitle")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("ProjectId,ProjectTitle")] Project project)
         {
-            if (id != project.Id)
+            if (id != project.ProjectId)
             {
                 return NotFound();
             }
@@ -102,7 +102,7 @@ namespace BugZapper.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProjectExists(project.Id))
+                    if (!ProjectExists(project.ProjectId))
                     {
                         return NotFound();
                     }
@@ -125,7 +125,7 @@ namespace BugZapper.Controllers
             }
 
             var project = await _context.Project
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ProjectId == id);
             if (project == null)
             {
                 return NotFound();
@@ -147,7 +147,7 @@ namespace BugZapper.Controllers
 
         private bool ProjectExists(int id)
         {
-            return _context.Project.Any(e => e.Id == id);
+            return _context.Project.Any(e => e.ProjectId == id);
         }
     }
 }

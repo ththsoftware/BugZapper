@@ -10,7 +10,7 @@ namespace BugZapper.Models
 
     public class Ticket
     {
-        public int Id { get; set; }
+        public int TicketId { get; set; }
         [Display(Name = "Ticket Number")]
         public string TicketNumber { get; set; }
         [Display(Name = "Subject")]
@@ -32,5 +32,9 @@ namespace BugZapper.Models
         [Display(Name = "Description")]
         public string BugDescription { get; set; }
 
+
+        public int ProjectId { get; set; }
+        [ForeignKey("ProjectId")]
+        public virtual Project Project { get; set; }
     }
 }

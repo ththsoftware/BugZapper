@@ -9,8 +9,12 @@ namespace BugZapper.Models
 {
     public class Project
     {
-        public int Id { get; set; }
+        public int ProjectId { get; set; }
         [Display(Name = "Project Name")]
         public string ProjectTitle { get; set; }
+
+        public virtual ICollection<Ticket> Tickets { get; set; }
+
+        public virtual ICollection<User> Users { get; set; }
     }
 }

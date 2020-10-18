@@ -5,6 +5,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20201015115033_InitialCreate.cs" />
+    <Compile Remove="Migrations\20201015115033_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201016114652_SecondCreate.cs" />
+    <Compile Remove="Migrations\20201016114652_SecondCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201017212518_ThirdCreate.cs" />
+    <Compile Remove="Migrations\20201017212518_ThirdCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201017214952_FourthCreate.cs" />
+    <Compile Remove="Migrations\20201017214952_FourthCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201017220121_FifthCreate.cs" />
+    <Compile Remove="Migrations\20201017220121_FifthCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201017221752_FifthCreateVOne.cs" />
+    <Compile Remove="Migrations\20201017221752_FifthCreateVOne.Designer.cs" />
+    <Compile Remove="Migrations\20201018104007_SixthCreate.cs" />
+    <Compile Remove="Migrations\20201018104007_SixthCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201018105723_SixthCreate.cs" />
+    <Compile Remove="Migrations\20201018105723_SixthCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201018110240_SixthCreate.cs" />
+    <Compile Remove="Migrations\20201018110240_SixthCreate.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.9">
@@ -12,6 +33,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

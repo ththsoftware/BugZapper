@@ -14,21 +14,23 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
+                <label asp-for="Project" class="control-label"></label>
+                <select asp-for="Project" asp-items="@(new SelectList(BugZapper.Controllers.TicketsController.UserList, "ProjectId", "ProjectTitle"))" class="form-control"><option value="">Unassigned</option></select>
+                <span asp-validation-for="Project" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="TicketSubject" class="control-label"></label>
                 <input asp-for="TicketSubject" class="form-control" />
                 <span asp-validation-for="TicketSubject" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="TicketOwner" class="control-label"></label>
-                <select asp-for="TicketOwner" asp-items="@(new SelectList(new List<SelectListItem>
-                                                                                    {
-                                                                                        new SelectListItem { Text = "Default User", Value = "Default User"}
-                                                                                        }, "Text", "Value"))" class="form-control" ></select>
+                <select asp-for="TicketOwner" asp-items="@(new SelectList(BugZapper.Controllers.TicketsController.UserList, "UserId", "UserName"))" class="form-control"><option value="">Unassigned</option></select>
                 <span asp-validation-for="TicketOwner" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CreatedBy" class="control-label"></label>
-                <input asp-for="CreatedBy" class="form-control" />
+                <select asp-for="CreatedBy" class="form-control" ><option value=""></option></select>
                 <span asp-validation-for="CreatedBy" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -39,7 +41,7 @@
                                                                                         new SelectListItem { Text = "In Progress", Value = "In Progress"},
                                                                                         new SelectListItem { Text = "Hold", Value = "Hold"},
                                                                                         new SelectListItem { Text = "Closed", Value = "Closed"},
-                                                                                        }, "Text", "Value"))" class="form-control" ></select>
+                                                                                        }, "Text", "Value"))" class="form-control"></select>
                 <span asp-validation-for="TicketStatus" class="text-danger"></span>
             </div>
             <div class="form-group">

@@ -15,6 +15,9 @@ namespace BugZapper.Controllers
         private readonly BugZapperContext _context;
         private static int TicketEnumerator = 0;
 
+        public static IEnumerable<User> UserList { get; set; }
+        public static IEnumerable<Project> ProjectList { get; set; }
+
         public TicketsController(BugZapperContext context)
         {
             _context = context;
@@ -35,7 +38,7 @@ namespace BugZapper.Controllers
             }
 
             var ticket = await _context.Ticket
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.TicketId == id);
             if (ticket == null)
             {
                 return NotFound();
@@ -47,6 +50,8 @@ namespace BugZapper.Controllers
         // GET: Tickets/Create
         public IActionResult Create()
         {
+            UserList = _context.User.ToList();
+            ProjectList = _context.Project.ToList();
             return View();
         }
 
@@ -82,7 +87,8 @@ namespace BugZapper.Controllers
             {
                 return NotFound();
             }
-
+            UserList = await _context.User.ToListAsync();
+            ProjectList = await _context.Project.ToListAsync();
             var ticket = await _context.Ticket.FindAsync(id);
             if (ticket == null)
             {
@@ -98,7 +104,7 @@ namespace BugZapper.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Ticket ticket)
         {
-            if (id != ticket.Id)
+            if (id != ticket.TicketId)
             {
                 return NotFound();
             }
@@ -121,7 +127,7 @@ namespace BugZapper.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TicketExists(ticket.Id))
+                    if (!TicketExists(ticket.TicketId))
                     {
                         return NotFound();
                     }
@@ -144,7 +150,7 @@ namespace BugZapper.Controllers
             }
 
             var ticket = await _context.Ticket
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.TicketId == id);
             if (ticket == null)
             {
                 return NotFound();
@@ -166,7 +172,7 @@ namespace BugZapper.Controllers
 
         private bool TicketExists(int id)
         {
-            return _context.Ticket.Any(e => e.Id == id);
+            return _context.Ticket.Any(e => e.TicketId == id);
         }
     }
 }

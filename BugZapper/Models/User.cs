@@ -9,13 +9,14 @@ namespace BugZapper.Models
 {
     public class User
     {
-        public int Id { get; set; }
+        public int UserId { get; set; }
         [Display(Name = "User")]
         public string UserName { get; set; }
         [Display(Name = "Permission Level")]
         public int PermissionLevel { get; set; }
 
-        
-
+        public int ProjectId { get; set; }
+        [ForeignKey("ProjectId")]
+        public virtual Project Project { get; set; }
     }
 }
