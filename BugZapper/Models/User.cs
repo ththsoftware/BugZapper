@@ -15,8 +15,8 @@ namespace BugZapper.Models
         [Display(Name = "Permission Level")]
         public int PermissionLevel { get; set; }
 
-        public int ProjectId { get; set; }
-        [ForeignKey("ProjectId")]
-        public virtual Project Project { get; set; }
+        public virtual ICollection<ProjectUser> ProjectUsers { get; set; }
+        public virtual ICollection<Ticket> Tickets { get; set; }
+
     }
 }

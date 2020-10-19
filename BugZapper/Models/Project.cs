@@ -15,6 +15,6 @@ namespace BugZapper.Models
 
         public virtual ICollection<Ticket> Tickets { get; set; }
 
-        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<ProjectUser> ProjectUsers { get; set; }
     }
 }

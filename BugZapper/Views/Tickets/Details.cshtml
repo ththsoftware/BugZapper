@@ -8,7 +8,7 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Ticket</h4>
+    <h4>Ticket @Html.DisplayNameFor(model => model.TicketNumber)</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -16,6 +16,12 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.TicketSubject)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Project)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Project)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.TicketOwner)

@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugZapper.Data;
 using BugZapper.Models;
+using SQLitePCL;
 
 namespace BugZapper.Controllers
 {
     public class UsersController : Controller
     {
         private readonly BugZapperContext _context;
+
+        public static IEnumerable<Project> ProjectList { get; set; }
 
         public UsersController(BugZapperContext context)
         {
@@ -46,6 +49,7 @@ namespace BugZapper.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
+            ProjectList = new List<Project>(_context.Project.ToList());
             return View();
         }
 
@@ -54,8 +58,9 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId, UserName, PermissionLevel")] User user)
+        public async Task<IActionResult> Create([Bind("UserId, UserName, PermissionLevel,ProjectUsers")] User user)
         {
+            user.ProjectUsers = new ProjectUser;
             if (ModelState.IsValid)
             {
                 _context.Add(user);
@@ -72,7 +77,7 @@ namespace BugZapper.Controllers
             {
                 return NotFound();
             }
-
+            ProjectList = new List<Project>(_context.Project.ToList());
             var user = await _context.User.FindAsync(id);
             if (user == null)
             {
@@ -86,7 +91,7 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId, UserName, PermissionLevel")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId, UserName, PermissionLevel,ProjectUsers")] User user)
         {
             if (id != user.UserId)
             {
