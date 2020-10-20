@@ -2,15 +2,26 @@
 
 @{
     ViewData["Title"] = "Details";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Details</h1>
 
 <div>
-    <h4>Ticket @Html.DisplayNameFor(model => model.TicketNumber)</h4>
+    <h4>Ticket</h4>
     <hr />
     <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TicketNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TicketNumber)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Project)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Project.ProjectTitle)
+        </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.TicketSubject)
         </dt>
@@ -18,16 +29,10 @@
             @Html.DisplayFor(model => model.TicketSubject)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Project)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Project)
-        </dd>
-        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.TicketOwner)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TicketOwner)
+            @Html.DisplayFor(model => model.User.UserName)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CreatedBy)
@@ -59,6 +64,7 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.BugDescription)
         </dd>
+
     </dl>
 </div>
 <div>

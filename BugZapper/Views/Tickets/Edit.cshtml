@@ -2,12 +2,11 @@
 
 @{
     ViewData["Title"] = "Edit";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Edit</h1>
 
-<h4 class="pt-2">@Model.TicketNumber</h4>
+<h4>Ticket - @(Model.TicketNumber)</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -15,7 +14,12 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="TicketId" />
             <input type="hidden" asp-for="TicketNumber" />
+            <input type="hidden" asp-for="ClosedDate" />
             <input type="hidden" asp-for="CreatedBy" />
+            <div class="form-group">
+                <label asp-for="Project" class="control-label"></label>
+                <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId"><option value="">-- Select Project --</option></select>
+            </div>
             <div class="form-group">
                 <label asp-for="TicketSubject" class="control-label"></label>
                 <input asp-for="TicketSubject" class="form-control" />
@@ -23,8 +27,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="TicketOwner" class="control-label"></label>
-                <input asp-for="TicketOwner" class="form-control" />
-                <span asp-validation-for="TicketOwner" class="text-danger"></span>
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="TicketStatus" class="control-label"></label>
@@ -35,7 +38,6 @@
                                                                                         new SelectListItem { Text = "Hold", Value = "Hold"},
                                                                                         new SelectListItem { Text = "Closed", Value = "Closed"},
                                                                                         }, "Text", "Value"))" class="form-control"></select>
-                <span asp-validation-for="TicketStatus" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="BugDescription" class="control-label"></label>
@@ -53,3 +55,6 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

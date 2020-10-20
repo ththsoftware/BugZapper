@@ -15,9 +15,6 @@ namespace BugZapper.Controllers
         private readonly BugZapperContext _context;
         private static int TicketEnumerator = 0;
 
-        public static IEnumerable<User> UserList { get; set; }
-        public static IEnumerable<Project> ProjectList { get; set; }
-
         public TicketsController(BugZapperContext context)
         {
             _context = context;
@@ -26,7 +23,8 @@ namespace BugZapper.Controllers
         // GET: Tickets
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Ticket.ToListAsync());
+            var bugZapperContext = _context.Ticket.Include(t => t.Project).Include(t => t.User);
+            return View(await bugZapperContext.ToListAsync());
         }
 
         // GET: Tickets/Details/5
@@ -38,6 +36,8 @@ namespace BugZapper.Controllers
             }
 
             var ticket = await _context.Ticket
+                .Include(t => t.Project)
+                .Include(t => t.User)
                 .FirstOrDefaultAsync(m => m.TicketId == id);
             if (ticket == null)
             {
@@ -50,8 +50,8 @@ namespace BugZapper.Controllers
         // GET: Tickets/Create
         public IActionResult Create()
         {
-            UserList = _context.User.ToList();
-            ProjectList = _context.Project.ToList();
+            ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle");
+            ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName");
             return View();
         }
 
@@ -60,13 +60,14 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Ticket ticket)
+        public async Task<IActionResult> Create([Bind("TicketId,TicketNumber,TicketSubject,TicketOwner,CreatedBy,ClosedDate,TicketStatus,BugDescription,ProjectId,UserId")] Ticket ticket)
         {
             ticket.CreatedDate = DateTime.Now;
-            if (ticket.TicketStatus.Equals("Closed")) 
+            if (ticket.TicketStatus.Equals("Closed"))
             {
                 ticket.ClosedDate = DateTime.Now.ToString();
-            } else
+            }
+            else
             {
                 ticket.ClosedDate = "N/A";
             }
@@ -77,6 +78,8 @@ namespace BugZapper.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", ticket.ProjectId);
+            ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName", ticket.UserId);
             return View(ticket);
         }
 
@@ -87,13 +90,14 @@ namespace BugZapper.Controllers
             {
                 return NotFound();
             }
-            UserList = await _context.User.ToListAsync();
-            ProjectList = await _context.Project.ToListAsync();
+
             var ticket = await _context.Ticket.FindAsync(id);
             if (ticket == null)
             {
                 return NotFound();
             }
+            ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", ticket.ProjectId);
+            ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName", ticket.UserId);
             return View(ticket);
         }
 
@@ -102,13 +106,12 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Ticket ticket)
+        public async Task<IActionResult> Edit(int id, [Bind("TicketId,TicketNumber,TicketSubject,TicketOwner,CreatedBy,ClosedDate,TicketStatus,BugDescription,ProjectId,UserId")] Ticket ticket)
         {
             if (id != ticket.TicketId)
             {
                 return NotFound();
             }
-
             if (ticket.TicketStatus.Equals("Closed"))
             {
                 ticket.ClosedDate = DateTime.Now.ToString();
@@ -138,6 +141,8 @@ namespace BugZapper.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", ticket.ProjectId);
+            ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName", ticket.UserId);
             return View(ticket);
         }
 
@@ -150,6 +155,8 @@ namespace BugZapper.Controllers
             }
 
             var ticket = await _context.Ticket
+                .Include(t => t.Project)
+                .Include(t => t.User)
                 .FirstOrDefaultAsync(m => m.TicketId == id);
             if (ticket == null)
             {

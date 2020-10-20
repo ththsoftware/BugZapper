@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Index</h1>
@@ -20,13 +19,13 @@
                 @Html.DisplayNameFor(model => model.TicketSubject)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Project)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.TicketOwner)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ClosedDate)
+                @Html.DisplayNameFor(model => model.CreatedBy)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.TicketStatus)
@@ -47,13 +46,13 @@
                 @Html.DisplayFor(modelItem => item.TicketSubject)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TicketOwner)
+                @Html.DisplayFor(modelItem => item.Project.ProjectTitle)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
+                @Html.DisplayFor(modelItem => item.User.UserName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ClosedDate)
+                @Html.DisplayFor(modelItem => item.CreatedBy)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TicketStatus)

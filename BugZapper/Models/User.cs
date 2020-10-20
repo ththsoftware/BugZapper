@@ -13,8 +13,9 @@ namespace BugZapper.Models
         [Display(Name = "User")]
         public string UserName { get; set; }
         [Display(Name = "Permission Level")]
+        [Range(0,2)]
         public int PermissionLevel { get; set; }
-
+        [Display(Name = "Change Project")]
         public virtual ICollection<ProjectUser> ProjectUsers { get; set; }
         public virtual ICollection<Ticket> Tickets { get; set; }
 

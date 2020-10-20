@@ -7,15 +7,16 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugZapper.Data;
 using BugZapper.Models;
-using SQLitePCL;
+using Microsoft.CodeAnalysis;
+using Microsoft.AspNetCore.SignalR;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BugZapper.Controllers
 {
     public class UsersController : Controller
     {
         private readonly BugZapperContext _context;
-
-        public static IEnumerable<Project> ProjectList { get; set; }
 
         public UsersController(BugZapperContext context)
         {
@@ -49,7 +50,9 @@ namespace BugZapper.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
-            ProjectList = new List<Project>(_context.Project.ToList());
+            var user = new User();
+            user.ProjectUsers = new List<ProjectUser>();
+            ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle");
             return View();
         }
 
@@ -58,15 +61,27 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId, UserName, PermissionLevel,ProjectUsers")] User user)
+
+        public async Task<IActionResult> Create([Bind("UserId,UserName,PermissionLevel,ProjectUsers")] User user, string[] selectedProject)
         {
-            user.ProjectUsers = new ProjectUser;
+            if (selectedProject != null)
+            {
+                user.ProjectUsers = new List<ProjectUser>();
+                foreach (var project in selectedProject)
+                {
+                    var projectToAdd = new ProjectUser { UserId = user.UserId, ProjectId = int.Parse(project) };
+                    user.ProjectUsers.Add(projectToAdd);
+                }
+            }
+
             if (ModelState.IsValid)
             {
+                
                 _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", selectedProject);
             return View(user);
         }
 
@@ -77,12 +92,12 @@ namespace BugZapper.Controllers
             {
                 return NotFound();
             }
-            ProjectList = new List<Project>(_context.Project.ToList());
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.User.Include(u => u.ProjectUsers).ThenInclude(u => u.Project).AsNoTracking().FirstOrDefaultAsync(m => m.UserId == id);
             if (user == null)
             {
                 return NotFound();
             }
+            ViewData["ProjectIdRemaining"] = new SelectList(PopulateRemainingProjects(user), "ProjectId", "ProjectTitle");
             return View(user);
         }
 
@@ -91,34 +106,107 @@ namespace BugZapper.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId, UserName, PermissionLevel,ProjectUsers")] User user)
+
+        public async Task<IActionResult> Edit(int? id, string[] selectedProjectAdd)
         {
-            if (id != user.UserId)
+            
+            if (id == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var user = await _context.User
+                .Include(u => u.ProjectUsers)
+                    .ThenInclude(u => u.Project)
+                .FirstOrDefaultAsync(m => m.UserId == id);
+
+            if (await TryUpdateModelAsync<User>(
+                user,
+                "",
+                i => i.UserName, i => i.PermissionLevel))
             {
+                UpdateProjectUsers(selectedProjectAdd, user);
                 try
                 {
-                    _context.Update(user);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateException /* ex */)
                 {
-                    if (!UserExists(user.UserId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    //Log the error (uncomment ex variable name and write a log.)
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                        "Try again, and if the problem persists, " +
+                        "see your system administrator.");
                 }
                 return RedirectToAction(nameof(Index));
             }
+            UpdateProjectUsers(selectedProjectAdd, user);
+            ViewData["ProjectIdRemaining"] = new SelectList(PopulateRemainingProjects(user), "ProjectId", "ProjectTitle", selectedProjectAdd);
             return View(user);
+        }
+
+        private void UpdateProjectUsers(string[] selectedProjectAdd, User user)
+        {
+            if (selectedProjectAdd == null)
+            {
+                user.ProjectUsers = new List<ProjectUser>();
+                return;
+            }
+
+            var selectedProjectAddHS = new HashSet<string>(selectedProjectAdd);
+            var projectUsers = new HashSet<int>
+                (user.ProjectUsers.Select(p => p.Project.ProjectId));
+            foreach (var project in _context.Project)
+            {
+                if (selectedProjectAddHS.Contains(project.ProjectId.ToString()))
+                {
+                    if (!projectUsers.Contains(project.ProjectId))
+                    {
+                        user.ProjectUsers.Add(new ProjectUser { UserId = user.UserId, ProjectId = project.ProjectId });
+                    }
+                }
+                else
+                {
+
+                    if (projectUsers.Contains(project.ProjectId))
+                    {
+                        ProjectUser projectToRemove = user.ProjectUsers.FirstOrDefault(u => u.ProjectId == project.ProjectId);
+                        _context.Remove(projectToRemove);
+                    }
+                }
+            }
+        }
+
+        private List<Models.Project> PopulateRemainingProjects(User user)
+        {
+            var allProjects = _context.Project;
+            var projectUsers = _context.ProjectUser;
+            var userProjects = new HashSet<int>();
+            var viewModel = new List<Models.Project>();
+            bool isInUser = false;
+            foreach (var projectUser in projectUsers)
+            {
+                if (user.UserId == projectUser.UserId)
+                {
+                    userProjects.Add(projectUser.ProjectId);
+                }
+            }
+            foreach (var project in allProjects)
+            {
+                foreach (int projectId in userProjects)
+                {
+                    if (project.ProjectId == projectId) 
+                    {
+                        isInUser = true;
+                        break;
+                    }
+                }
+                if (!isInUser)
+                {
+                    viewModel.Add(project);
+                }
+                isInUser = false;   
+            }
+            return viewModel;
         }
 
         // GET: Users/Delete/5

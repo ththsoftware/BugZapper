@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Edit";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Edit</h1>
@@ -18,12 +17,15 @@
                 <label asp-for="UserName" class="control-label"></label>
                 <input asp-for="UserName" class="form-control" />
                 <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="PermissionLevel" class="control-label"></label>
                 <input asp-for="PermissionLevel" class="form-control" />
                 <span asp-validation-for="PermissionLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="ProjectUsers" class="control-label"></label>
-                <select asp-for="ProjectUsers" asp-items="@(new SelectList(BugZapper.Controllers.UsersController.ProjectList))" class="form-control"></select>
-                <span asp-validation-for="ProjectUsers" class="text-danger"></span>
+                <select name="selectedProjectAdd" class="form-control" asp-items="ViewBag.ProjectIdRemaining"><option hidden disabled selected>---Select a project to add---</option></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -36,3 +38,6 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

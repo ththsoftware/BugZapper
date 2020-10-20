@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Create</h1>
@@ -17,12 +16,15 @@
                 <label asp-for="UserName" class="control-label"></label>
                 <input asp-for="UserName" class="form-control" />
                 <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="PermissionLevel" class="control-label"></label>
-                <input asp-for="PermissionLevel" class="form-control" />
+                <input asp-for="PermissionLevel" class="form-control" min="0" max="2" />
                 <span asp-validation-for="PermissionLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="ProjectUsers" class="control-label"></label>
-                <select asp-for="ProjectUsers" asp-items="@(new SelectList(BugZapper.Controllers.UsersController.ProjectList, "ProjectId", "ProjectTitle"))" class="form-control" ></select>
-                <span asp-validation-for="ProjectUsers" class="text-danger"></span>
+                <select name="selectedProject" class="form-control" asp-items="ViewBag.ProjectId" ><option value="@null" view="">---Select a project---</option></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -35,3 +37,6 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
