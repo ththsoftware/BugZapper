@@ -1,16 +1,62 @@
-﻿@{
+﻿@model IEnumerable<BugZapper.Models.Ticket>
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div>
-    <div class="container border-bottom-1 pt-3 pb-2">
+    <div class="border-bottom-1 pt-3 pb-2">
         <div class="row pl-5">
-            <h3>Assigned Projects</h3>
+            <h3>Assigned Project</h3>
         </div>
     </div>
-    <div class="container pt-3">
-        <div class="table-responsive table-hover">
-            
-        </div>
+    <div class="table-responsive" style="overflow-x:auto;">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.TicketNumber)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.TicketSubject)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.TicketOwner)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.CreatedBy)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.TicketStatus)
+                    </th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td style="white-space: nowrap;">
+                            @Html.DisplayFor(modelItem => item.TicketNumber)
+                        </td>
+                        <td style="white-space: nowrap;">
+                            @Html.DisplayFor(modelItem => item.TicketSubject)
+                        </td>
+                        <td style="white-space: nowrap;">
+                            @Html.DisplayFor(modelItem => item.User.UserName)
+                        </td>
+                        <td style="white-space: nowrap;">
+                            @Html.DisplayFor(modelItem => item.CreatedBy)
+                        </td>
+                        <td style="white-space: nowrap;">
+                            @Html.DisplayFor(modelItem => item.TicketStatus)
+                        </td>
+                        <td style="white-space: nowrap;">
+                            <a class="btn btn-dark" asp-controller="Tickets" asp-action="Edit" asp-route-id="@item.TicketId">Edit</a>
+                            <a class="btn btn-dark" asp-controller="Tickets" asp-action="Details" asp-route-id="@item.TicketId">View</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>

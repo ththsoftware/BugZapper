@@ -76,7 +76,7 @@ namespace BugZapper.Controllers
             {
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Home");
             }
             ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", ticket.ProjectId);
             ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName", ticket.UserId);
@@ -139,7 +139,7 @@ namespace BugZapper.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Home");
             }
             ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", ticket.ProjectId);
             ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName", ticket.UserId);
@@ -174,7 +174,7 @@ namespace BugZapper.Controllers
             var ticket = await _context.Ticket.FindAsync(id);
             _context.Ticket.Remove(ticket);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Home");
         }
 
         private bool TicketExists(int id)

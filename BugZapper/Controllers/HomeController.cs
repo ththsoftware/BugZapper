@@ -6,21 +6,31 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using BugZapper.Models;
+using BugZapper.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace BugZapper.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        //private readonly ILogger<HomeController> _logger;
+        private readonly BugZapperContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        /*public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+        } */
+        
+
+        public HomeController(BugZapperContext context)
+        {
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var bugZapperContext = _context.Ticket.Include(t => t.Project).Include(t => t.User);
+            return View(await bugZapperContext.ToListAsync());
         }
 
         public IActionResult Privacy()

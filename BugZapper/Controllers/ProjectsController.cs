@@ -58,6 +58,7 @@ namespace BugZapper.Controllers
         {
             if (ModelState.IsValid)
             {
+                new List<Ticket>
                 _context.Add(project);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
