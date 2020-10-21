@@ -1,9 +1,7 @@
-﻿@model BugZapper.Models.Project
+﻿@model IEnumerable<BugZapper.Models.Ticket>
 @{
     ViewData["Title"] = "Details";
 }
-
-<h1>Details</h1>
 
 <div>
     <div class="border-bottom-1 pt-3 pb-2">
@@ -16,27 +14,27 @@
             <thead>
                 <tr>
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().TicketNumber)
+                        @Html.DisplayNameFor(model => model.TicketNumber)
                     </th>
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().TicketSubject)
+                        @Html.DisplayNameFor(model => model.TicketSubject)
                     </th>
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().TicketOwner)
+                        @Html.DisplayNameFor(model => model.TicketOwner)
                     </th>
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().CreatedBy)
+                        @Html.DisplayNameFor(model => model.CreatedBy)
                     </th>
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().TicketStatus)
+                        @Html.DisplayNameFor(model => model.TicketStatus)
                     </th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.Tickets)
+                @foreach (var item in Model)
                 {
-                    if (item.ProjectId == ViewBag.ProjectId)
+                    if (item.ProjectId == ViewBag.Id)
                     {
                         <tr>
                             <td style="white-space: nowrap;">

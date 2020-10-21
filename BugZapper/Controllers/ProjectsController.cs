@@ -39,8 +39,9 @@ namespace BugZapper.Controllers
             {
                 return NotFound();
             }
-
-            return View(project);
+            ViewBag.ProjectTitle = project.ProjectTitle;
+            ViewBag.Id = project.ProjectId;
+            return View(await _context.Ticket.ToListAsync());
         }
 
         // GET: Projects/Create
@@ -58,7 +59,6 @@ namespace BugZapper.Controllers
         {
             if (ModelState.IsValid)
             {
-                new List<Ticket>
                 _context.Add(project);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

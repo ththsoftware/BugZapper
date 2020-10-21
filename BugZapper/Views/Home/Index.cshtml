@@ -6,7 +6,7 @@
 <div>
     <div class="border-bottom-1 pt-3 pb-2">
         <div class="row pl-5">
-            <h3>Assigned Project</h3>
+            <h3>Open Tickets</h3>
         </div>
     </div>
     <div class="table-responsive" style="overflow-x:auto;">
@@ -34,27 +34,30 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            @Html.DisplayFor(modelItem => item.TicketNumber)
-                        </td>
-                        <td style="white-space: nowrap;">
-                            @Html.DisplayFor(modelItem => item.TicketSubject)
-                        </td>
-                        <td style="white-space: nowrap;">
-                            @Html.DisplayFor(modelItem => item.User.UserName)
-                        </td>
-                        <td style="white-space: nowrap;">
-                            @Html.DisplayFor(modelItem => item.CreatedBy)
-                        </td>
-                        <td style="white-space: nowrap;">
-                            @Html.DisplayFor(modelItem => item.TicketStatus)
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <a class="btn btn-dark" asp-controller="Tickets" asp-action="Edit" asp-route-id="@item.TicketId">Edit</a>
-                            <a class="btn btn-dark" asp-controller="Tickets" asp-action="Details" asp-route-id="@item.TicketId">View</a>
-                        </td>
-                    </tr>
+                    if (!item.TicketStatus.Equals("Closed"))
+                    {
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                @Html.DisplayFor(modelItem => item.TicketNumber)
+                            </td>
+                            <td style="white-space: nowrap;">
+                                @Html.DisplayFor(modelItem => item.TicketSubject)
+                            </td>
+                            <td style="white-space: nowrap;">
+                                @Html.DisplayFor(modelItem => item.User.UserName)
+                            </td>
+                            <td style="white-space: nowrap;">
+                                @Html.DisplayFor(modelItem => item.CreatedBy)
+                            </td>
+                            <td style="white-space: nowrap;">
+                                @Html.DisplayFor(modelItem => item.TicketStatus)
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <a class="btn btn-dark" asp-controller="Tickets" asp-action="Edit" asp-route-id="@item.TicketId">Edit</a>
+                                <a class="btn btn-dark" asp-controller="Tickets" asp-action="Details" asp-route-id="@item.TicketId">View</a>
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
