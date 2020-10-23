@@ -10,6 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BugZapper.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.AspNetCore.Http;
 
 namespace BugZapper
 {
@@ -25,6 +28,29 @@ namespace BugZapper
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<CookiePolicyOptions>(options => {
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
+            
+
+            services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddCookie()
+            .AddOpenIdConnect("Auth0", options => {
+                options.Authority = $"https://{Configuration["Auth0:Domain"]}";
+                options.ClientId = Configuration["Auth0:ClientId"];
+                options.ClientSecret = Configuration["Auth0:ClientSecret"];
+                options.ResponseType = OpenIdConnectResponseType.Code;
+                options.Scope.Clear();
+                options.Scope.Add("openId");
+                options.CallbackPath = new PathString("/callabck");
+                options.ClaimsIssuer = "Auth0";
+            });
+
             services.AddControllersWithViews();
 
             services.AddDbContext<BugZapperContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BugZapperContext")));
