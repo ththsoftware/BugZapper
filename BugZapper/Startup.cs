@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace BugZapper
 {
@@ -47,8 +48,34 @@ namespace BugZapper
                 options.ResponseType = OpenIdConnectResponseType.Code;
                 options.Scope.Clear();
                 options.Scope.Add("openId");
-                options.CallbackPath = new PathString("/callabck");
+                options.CallbackPath = new PathString("/callback");
                 options.ClaimsIssuer = "Auth0";
+
+                options.Events = new OpenIdConnectEvents
+                {
+                    // handle the logout redirection
+                    OnRedirectToIdentityProviderForSignOut = (context) =>
+                    {
+                        var logoutUri = $"https://{Configuration["Auth0:Domain"]}/v2/logout?client_id={Configuration["Auth0:ClientId"]}";
+
+                        var postLogoutUri = context.Properties.RedirectUri;
+                        if (!string.IsNullOrEmpty(postLogoutUri))
+                        {
+                            if (postLogoutUri.StartsWith("/"))
+                            {
+                                // transform to absolute
+                                var request = context.Request;
+                                postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
+                            }
+                            logoutUri += $"&returnTo={ Uri.EscapeDataString(postLogoutUri)}";
+                        }
+
+                        context.Response.Redirect(logoutUri);
+                        context.HandleResponse();
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
             services.AddControllersWithViews();
@@ -71,9 +98,11 @@ namespace BugZapper
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCookiePolicy();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

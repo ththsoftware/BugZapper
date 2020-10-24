@@ -31,7 +31,16 @@
                             <a class="text-white btn btn-primary" asp-area="" asp-controller="Tickets" asp-action="Create">Create Ticket</a>
                         </li>
                     </ol>
-
+                    <ul class="nav navbar-nav navbar-right">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li><a id="qsLogoutBtn" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                        }
+                        else
+                        {
+                            <li><a id="qsLoginBtn" asp-controller="Account" asp-action="Login">Login</a></li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
