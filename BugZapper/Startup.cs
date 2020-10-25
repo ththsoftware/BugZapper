@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BugZapper
 {
@@ -48,8 +49,15 @@ namespace BugZapper
                 options.ResponseType = OpenIdConnectResponseType.Code;
                 options.Scope.Clear();
                 options.Scope.Add("openId");
+                options.Scope.Add("profile");
+                options.Scope.Add("email");
+                options.SaveTokens = true;
                 options.CallbackPath = new PathString("/callback");
                 options.ClaimsIssuer = "Auth0";
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = "name"
+                };
 
                 options.Events = new OpenIdConnectEvents
                 {

@@ -9,7 +9,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-dark border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-dark border-bottom box-shadow mb-3 justify-content-between">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Bug<span class="text-white-50">Zapper</span></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -19,8 +19,8 @@
                 <div>
 
                 </div>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ol class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row flex-column-reverse">
+                    <ol class="navbar-nav mr-auto flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Open Tickets</a>
                         </li>
@@ -31,19 +31,20 @@
                             <a class="text-white btn btn-primary" asp-area="" asp-controller="Tickets" asp-action="Create">Create Ticket</a>
                         </li>
                     </ol>
-                    <ul class="nav navbar-nav navbar-right">
+                    <ol class="navbar-nav navbar-right my-2 my-md-0">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li><a id="qsLogoutBtn" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                            <li class="nav-item"><a class="nav-link text-light" id="qsLogoutBtn" asp-controller="Account" asp-action="Logout">Logout</a></li>
                         }
                         else
                         {
-                            <li><a id="qsLoginBtn" asp-controller="Account" asp-action="Login">Login</a></li>
+                            <li class="nav-item"><a class="nav-link text-light" id="qsLoginBtn" asp-controller="Account" asp-action="Login">Login</a></li>
                         }
-                    </ul>
+                    </ol>
                 </div>
             </div>
         </nav>
+        
     </header>
     <div class="container">
         <main role="main" class="pb-3">
