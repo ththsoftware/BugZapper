@@ -29,7 +29,25 @@ namespace BugZapper.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
+        {
+            // If the user is authenticated, then this is how you can get the access_token and id_token
+            if (User.Identity.IsAuthenticated)
+            {
+                 return new RedirectResult("/Home/OpenTickets");
+            } else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> OpenTickets()
         {
             // If the user is authenticated, then this is how you can get the access_token and id_token
             if (User.Identity.IsAuthenticated)
@@ -51,11 +69,6 @@ namespace BugZapper.Controllers
             }
             var bugZapperContext = _context.Ticket.Include(t => t.Project).Include(t => t.User);
             return View(await bugZapperContext.ToListAsync());
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

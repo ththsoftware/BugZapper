@@ -48,9 +48,10 @@ namespace BugZapper
                 options.ClientSecret = Configuration["Auth0:ClientSecret"];
                 options.ResponseType = OpenIdConnectResponseType.Code;
                 options.Scope.Clear();
-                options.Scope.Add("openId");
+                options.Scope.Add("openid");
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
+                options.GetClaimsFromUserInfoEndpoint = true;
                 options.SaveTokens = true;
                 options.CallbackPath = new PathString("/callback");
                 options.ClaimsIssuer = "Auth0";

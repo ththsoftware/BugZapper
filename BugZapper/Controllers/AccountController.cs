@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BugZapper.Models;
@@ -8,6 +9,7 @@ using BugZapper.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BugZapper.Controllers
@@ -40,5 +42,7 @@ namespace BugZapper.Controllers
                 ProfileImage = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
             }) ;
         }
+
+        
     }
 }
