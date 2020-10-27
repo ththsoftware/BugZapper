@@ -1,12 +1,12 @@
 ﻿@model IEnumerable<BugZapper.Models.Ticket>
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Open Tickets";
 }
 
 <div>
     <div class="border-bottom-1 pt-3 pb-2">
         <div class="row pl-5">
-            <h3>@(ViewBag.ProjectTitle)</h3>
+            <h3>Open Tickets</h3>
         </div>
     </div>
     <div class="table-responsive" style="overflow-x:auto;">
@@ -34,7 +34,7 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                    if (item.ProjectId == ViewBag.Id)
+                    if (!item.TicketStatus.Equals("Closed"))
                     {
                         <tr>
                             <td style="white-space: nowrap;">
@@ -53,7 +53,6 @@
                                 @Html.DisplayFor(modelItem => item.TicketStatus)
                             </td>
                             <td style="white-space: nowrap;">
-                                <a class="btn btn-dark" asp-controller="Tickets" asp-action="Edit" asp-route-id="@item.TicketId">Edit</a>
                                 <a class="btn btn-dark" asp-controller="Tickets" asp-action="Details" asp-route-id="@item.TicketId">View</a>
                             </td>
                         </tr>
@@ -62,7 +61,4 @@
             </tbody>
         </table>
     </div>
-</div>
-<div>
-    <a class="btn btn-dark" href='javascript:history.go(-1)'>Back to Projects</a>
 </div>

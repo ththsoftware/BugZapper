@@ -21,38 +21,74 @@ namespace BugZapper.Controllers
         }
 
         // GET: Tickets
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var bugZapperContext = _context.Ticket.Include(t => t.Project).Include(t => t.User);
-            return View(await bugZapperContext.ToListAsync());
+            if (User.Identity.IsAuthenticated)
+            {
+                if (!User.Identity.Name.Equals("Guest"))
+                {
+                    return new RedirectResult("/Home/OpenTickets");
+                }
+                else
+                {
+                    return new RedirectResult("/Guest/OpenTickets");
+                }
+
+            }
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            string stringId = id.ToString();
+            string guestPath = "/Guest/TicketDetails/" + stringId;
             var ticket = await _context.Ticket
-                .Include(t => t.Project)
-                .Include(t => t.User)
-                .FirstOrDefaultAsync(m => m.TicketId == id);
-            if (ticket == null)
+                        .Include(t => t.Project)
+                        .Include(t => t.User)
+                        .FirstOrDefaultAsync(m => m.TicketId == id);
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
-            }
+                if (!User.Identity.Name.Equals("Guest"))
+                {
+                    
+                    if (ticket == null)
+                    {
+                        return NotFound();
+                    }
 
-            return View(ticket);
+                    return View(ticket);
+                }
+                else
+                {
+                    return new RedirectResult(guestPath);
+                }
+
+            }
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
         }
 
         // GET: Tickets/Create
         public IActionResult Create()
         {
-            ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle");
-            ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName");
-            return View();
+            if (User.Identity.IsAuthenticated)
+            {
+                ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle");
+                ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName");
+                return View();
+            }
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         // POST: Tickets/Create
@@ -62,43 +98,63 @@ namespace BugZapper.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("TicketId,TicketNumber,TicketSubject,TicketOwner,CreatedBy,ClosedDate,TicketStatus,BugDescription,ProjectId,UserId")] Ticket ticket)
         {
-            ticket.CreatedDate = DateTime.Now;
-            if (ticket.TicketStatus.Equals("Closed"))
+            if (User.Identity.IsAuthenticated)
             {
-                ticket.ClosedDate = DateTime.Now.ToString();
+                ticket.CreatedDate = DateTime.Now;
+                if (ticket.TicketStatus.Equals("Closed"))
+                {
+                    ticket.ClosedDate = DateTime.Now.ToString();
+                }
+                else
+                {
+                    ticket.ClosedDate = "N/A";
+                }
+                ticket.TicketNumber = "T-" + (TicketEnumerator++);
+                if (ModelState.IsValid)
+                {
+                    _context.Add(ticket);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Index", "Home");
+                }
+                ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", ticket.ProjectId);
+                ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName", ticket.UserId);
+                return View(ticket);
+
             }
             else
             {
-                ticket.ClosedDate = "N/A";
+                return new RedirectResult("/Account/Login");
             }
-            ticket.TicketNumber = "T-" + (TicketEnumerator++);
-            if (ModelState.IsValid)
-            {
-                _context.Add(ticket);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Home");
-            }
-            ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", ticket.ProjectId);
-            ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName", ticket.UserId);
-            return View(ticket);
+            
         }
 
         // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var ticket = await _context.Ticket.FindAsync(id);
-            if (ticket == null)
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
+                if (!User.Identity.Name.Equals("Guest"))
+                {
+                    
+                    if (ticket == null)
+                    {
+                        return NotFound();
+                    }
+                    ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", ticket.ProjectId);
+                    ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName", ticket.UserId);
+                    return View(ticket);
+                }
+                else
+                {
+                    return new RedirectResult("/Guest/OpenTickets");
+                }
+
             }
-            ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", ticket.ProjectId);
-            ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName", ticket.UserId);
-            return View(ticket);
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
         }
 
         // POST: Tickets/Edit/5
@@ -108,62 +164,94 @@ namespace BugZapper.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("TicketId,TicketNumber,TicketSubject,TicketOwner,CreatedBy,ClosedDate,TicketStatus,BugDescription,ProjectId,UserId")] Ticket ticket)
         {
-            if (id != ticket.TicketId)
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
-            }
-            if (ticket.TicketStatus.Equals("Closed"))
-            {
-                ticket.ClosedDate = DateTime.Now.ToString();
-            }
-            else
-            {
-                ticket.ClosedDate = "N/A";
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (!User.Identity.Name.Equals("Guest"))
                 {
-                    _context.Update(ticket);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TicketExists(ticket.TicketId))
+                    if (id != ticket.TicketId)
                     {
                         return NotFound();
                     }
+                    if (ticket.TicketStatus.Equals("Closed"))
+                    {
+                        ticket.ClosedDate = DateTime.Now.ToString();
+                    }
                     else
                     {
-                        throw;
+                        ticket.ClosedDate = "N/A";
                     }
+
+                    if (ModelState.IsValid)
+                    {
+                        try
+                        {
+                            _context.Update(ticket);
+                            await _context.SaveChangesAsync();
+                        }
+                        catch (DbUpdateConcurrencyException)
+                        {
+                            if (!TicketExists(ticket.TicketId))
+                            {
+                                return NotFound();
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+                        return RedirectToAction("Index", "Home");
+                    }
+                    ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", ticket.ProjectId);
+                    ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName", ticket.UserId);
+                    return View(ticket);
                 }
-                return RedirectToAction("Index", "Home");
+                else
+                {
+                    return new RedirectResult("/Guest/OpenTickets");
+                }
+
             }
-            ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", ticket.ProjectId);
-            ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserName", ticket.UserId);
-            return View(ticket);
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         // GET: Tickets/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
-            }
+                if (!User.Identity.Name.Equals("Guest"))
+                {
+                    if (id == null)
+                    {
+                        return NotFound();
+                    }
 
-            var ticket = await _context.Ticket
-                .Include(t => t.Project)
-                .Include(t => t.User)
-                .FirstOrDefaultAsync(m => m.TicketId == id);
-            if (ticket == null)
+                    var ticket = await _context.Ticket
+                        .Include(t => t.Project)
+                        .Include(t => t.User)
+                        .FirstOrDefaultAsync(m => m.TicketId == id);
+                    if (ticket == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return View(ticket);
+                }
+                else
+                {
+                    return new RedirectResult("/Guest/OpenTickets");
+                }
+
+            }
+            else
             {
-                return NotFound();
+                return new RedirectResult("/Account/Login");
             }
-
-            return View(ticket);
+            
         }
 
         // POST: Tickets/Delete/5
@@ -171,10 +259,26 @@ namespace BugZapper.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ticket = await _context.Ticket.FindAsync(id);
-            _context.Ticket.Remove(ticket);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
+            if (User.Identity.IsAuthenticated)
+            {
+                if (!User.Identity.Name.Equals("Guest"))
+                {
+                    var ticket = await _context.Ticket.FindAsync(id);
+                    _context.Ticket.Remove(ticket);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    return new RedirectResult("/Guest/OpenTickets");
+                }
+
+            }
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         private bool TicketExists(int id)

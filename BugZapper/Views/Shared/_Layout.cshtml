@@ -27,9 +27,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Projects" asp-action="Index">Projects</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="text-white btn btn-primary" asp-area="" asp-controller="Tickets" asp-action="Create">Create Ticket</a>
-                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="text-white btn btn-primary" asp-area="" asp-controller="Tickets" asp-action="Create">Create Ticket</a>
+                            </li>
+                        }
                     </ol>
                     <ol class="navbar-nav navbar-right my-2 my-md-0">
                         @if (User.Identity.IsAuthenticated)

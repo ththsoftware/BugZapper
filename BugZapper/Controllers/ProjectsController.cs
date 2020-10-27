@@ -28,26 +28,56 @@ namespace BugZapper.Controllers
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
-            }
+                if (!User.Identity.Name.Equals("Guest"))
+                {
+                    if (id == null)
+                    {
+                        return NotFound();
+                    }
 
-            var project = await _context.Project
-                .FirstOrDefaultAsync(m => m.ProjectId == id);
-            if (project == null)
-            {
-                return NotFound();
+                    var project = await _context.Project
+                        .FirstOrDefaultAsync(m => m.ProjectId == id);
+                    if (project == null)
+                    {
+                        return NotFound();
+                    }
+                    ViewBag.ProjectTitle = project.ProjectTitle;
+                    ViewBag.Id = project.ProjectId;
+                    return View(await _context.Ticket.ToListAsync());
+                }
+                else
+                {
+                    return new RedirectResult("/Guest/ProjectTickets/" + id.ToString());
+                }
+
             }
-            ViewBag.ProjectTitle = project.ProjectTitle;
-            ViewBag.Id = project.ProjectId;
-            return View(await _context.Ticket.ToListAsync());
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
         }
 
         // GET: Projects/Create
         public IActionResult Create()
         {
-            return View();
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.Identity.Name.Equals("tthompson"))
+                {
+                    return View();
+                }
+                else
+                {
+                    return new RedirectResult("/");
+                }
+            } else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
+            
         }
 
         // POST: Projects/Create
@@ -57,29 +87,59 @@ namespace BugZapper.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProjectId,ProjectTitle")] Project project)
         {
-            if (ModelState.IsValid)
+            if (User.Identity.IsAuthenticated)
             {
-                _context.Add(project);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (User.Identity.Name.Equals("tthompson"))
+                {
+                    if (ModelState.IsValid)
+                    {
+                        _context.Add(project);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                    return View(project);
+                }
+                else
+                {
+                    return new RedirectResult("/");
+                }
             }
-            return View(project);
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         // GET: Projects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
-            }
+                if (User.Identity.Name.Equals("tthompson"))
+                {
+                    if (id == null)
+                    {
+                        return NotFound();
+                    }
 
-            var project = await _context.Project.FindAsync(id);
-            if (project == null)
-            {
-                return NotFound();
+                    var project = await _context.Project.FindAsync(id);
+                    if (project == null)
+                    {
+                        return NotFound();
+                    }
+                    return View(project);
+                }
+                else
+                {
+                    return new RedirectResult("/");
+                }
             }
-            return View(project);
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         // POST: Projects/Edit/5
@@ -89,50 +149,81 @@ namespace BugZapper.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ProjectId,ProjectTitle")] Project project)
         {
-            if (id != project.ProjectId)
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (User.Identity.Name.Equals("tthompson"))
                 {
-                    _context.Update(project);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProjectExists(project.ProjectId))
+                    if (id != project.ProjectId)
                     {
                         return NotFound();
                     }
-                    else
+
+                    if (ModelState.IsValid)
                     {
-                        throw;
+                        try
+                        {
+                            _context.Update(project);
+                            await _context.SaveChangesAsync();
+                        }
+                        catch (DbUpdateConcurrencyException)
+                        {
+                            if (!ProjectExists(project.ProjectId))
+                            {
+                                return NotFound();
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+                        return RedirectToAction(nameof(Index));
                     }
+                    return View(project);
                 }
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    return new RedirectResult("/");
+                }
             }
-            return View(project);
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         // GET: Projects/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var project = await _context.Project
                 .FirstOrDefaultAsync(m => m.ProjectId == id);
-            if (project == null)
-            {
-                return NotFound();
-            }
 
-            return View(project);
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.Identity.Name.Equals("tthompson"))
+                {
+                    if (id == null)
+                    {
+                        return NotFound();
+                    }
+
+                    if (project == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return View(project);
+                }
+                else
+                {
+                    return new RedirectResult("/");
+                }
+            }
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         // POST: Projects/Delete/5
@@ -141,9 +232,24 @@ namespace BugZapper.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var project = await _context.Project.FindAsync(id);
-            _context.Project.Remove(project);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.Identity.Name.Equals("tthompson"))
+                {
+                    _context.Project.Remove(project);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return new RedirectResult("/");
+                }
+            }
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         private bool ProjectExists(int id)

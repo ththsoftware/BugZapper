@@ -26,34 +26,80 @@ namespace BugZapper.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.Identity.Name.Equals("tthompson"))
+                {
+                    
+                }
+                else
+                {
+                    return new RedirectResult("/");
+                }
+            }
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
             return View(await _context.User.ToListAsync());
         }
 
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var user = await _context.User
                 .FirstOrDefaultAsync(m => m.UserId == id);
-            if (user == null)
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
-            }
+                if (User.Identity.Name.Equals("tthompson"))
+                {
+                    if (id == null)
+                    {
+                        return NotFound();
+                    }
 
-            return View(user);
+
+                    if (user == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return View(user);
+                }
+                else
+                {
+                    return new RedirectResult("/");
+                }
+            }
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         // GET: Users/Create
         public IActionResult Create()
         {
             var user = new User();
-            user.ProjectUsers = new List<ProjectUser>();
-            ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle");
-            return View();
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.Identity.Name.Equals("tthompson"))
+                {
+                    user.ProjectUsers = new List<ProjectUser>();
+                    ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle");
+                    return View();
+                }
+                else
+                {
+                    return new RedirectResult("/");
+                }
+            }
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         // POST: Users/Create
@@ -73,32 +119,62 @@ namespace BugZapper.Controllers
                     user.ProjectUsers.Add(projectToAdd);
                 }
             }
-
-            if (ModelState.IsValid)
+            if (User.Identity.IsAuthenticated)
             {
-                
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (User.Identity.Name.Equals("tthompson"))
+                {
+                    if (ModelState.IsValid)
+                    {
+
+                        _context.Add(user);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                    ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", selectedProject);
+                    return View(user);
+                }
+                else
+                {
+                    return new RedirectResult("/");
+                }
             }
-            ViewData["ProjectId"] = new SelectList(_context.Project, "ProjectId", "ProjectTitle", selectedProject);
-            return View(user);
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
             var user = await _context.User.Include(u => u.ProjectUsers).ThenInclude(u => u.Project).AsNoTracking().FirstOrDefaultAsync(m => m.UserId == id);
-            if (user == null)
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
+                if (User.Identity.Name.Equals("tthompson"))
+                {
+                    if (id == null)
+                    {
+                        return NotFound();
+                    }
+
+                    if (user == null)
+                    {
+                        return NotFound();
+                    }
+                    ViewData["ProjectIdRemaining"] = new SelectList(PopulateRemainingProjects(user), "ProjectId", "ProjectTitle");
+                    return View(user);
+                }
+                else
+                {
+                    return new RedirectResult("/");
+                }
             }
-            ViewData["ProjectIdRemaining"] = new SelectList(PopulateRemainingProjects(user), "ProjectId", "ProjectTitle");
-            return View(user);
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         // POST: Users/Edit/5
@@ -109,39 +185,56 @@ namespace BugZapper.Controllers
 
         public async Task<IActionResult> Edit(int? id, string[] selectedProjectAdd)
         {
-            
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var user = await _context.User
                 .Include(u => u.ProjectUsers)
                     .ThenInclude(u => u.Project)
                 .FirstOrDefaultAsync(m => m.UserId == id);
 
-            if (await TryUpdateModelAsync<User>(
-                user,
-                "",
-                i => i.UserName, i => i.PermissionLevel))
+            if (User.Identity.IsAuthenticated)
             {
-                UpdateProjectUsers(selectedProjectAdd, user);
-                try
+                if (User.Identity.Name.Equals("tthompson"))
                 {
-                    await _context.SaveChangesAsync();
+                    if (id == null)
+                    {
+                        return NotFound();
+                    }
+
+
+
+                    if (await TryUpdateModelAsync(
+                        user,
+                        "",
+                        i => i.UserName, i => i.PermissionLevel))
+                    {
+                        UpdateProjectUsers(selectedProjectAdd, user);
+                        try
+                        {
+                            await _context.SaveChangesAsync();
+                        }
+                        catch (DbUpdateException /* ex */)
+                        {
+                            //Log the error (uncomment ex variable name and write a log.)
+                            ModelState.AddModelError("", "Unable to save changes. " +
+                                "Try again, and if the problem persists, " +
+                                "see your system administrator.");
+                        }
+                        return RedirectToAction(nameof(Index));
+                    }
+                    UpdateProjectUsers(selectedProjectAdd, user);
+                    ViewData["ProjectIdRemaining"] = new SelectList(PopulateRemainingProjects(user), "ProjectId", "ProjectTitle", selectedProjectAdd);
+                    return View(user);
                 }
-                catch (DbUpdateException /* ex */)
+                else
                 {
-                    //Log the error (uncomment ex variable name and write a log.)
-                    ModelState.AddModelError("", "Unable to save changes. " +
-                        "Try again, and if the problem persists, " +
-                        "see your system administrator.");
+                    return new RedirectResult("/");
                 }
-                return RedirectToAction(nameof(Index));
             }
-            UpdateProjectUsers(selectedProjectAdd, user);
-            ViewData["ProjectIdRemaining"] = new SelectList(PopulateRemainingProjects(user), "ProjectId", "ProjectTitle", selectedProjectAdd);
-            return View(user);
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+
+            
         }
 
         private void UpdateProjectUsers(string[] selectedProjectAdd, User user)
@@ -212,19 +305,35 @@ namespace BugZapper.Controllers
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var user = await _context.User
                 .FirstOrDefaultAsync(m => m.UserId == id);
-            if (user == null)
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
-            }
+                if (User.Identity.Name.Equals("tthompson"))
+                {
+                    if (id == null)
+                    {
+                        return NotFound();
+                    }
 
-            return View(user);
+
+                    if (user == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return View(user);
+                }
+                else
+                {
+                    return new RedirectResult("/");
+                }
+            }
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         // POST: Users/Delete/5
@@ -233,9 +342,24 @@ namespace BugZapper.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var user = await _context.User.FindAsync(id);
-            _context.User.Remove(user);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.Identity.Name.Equals("tthompson"))
+                {
+                    _context.User.Remove(user);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return new RedirectResult("/");
+                }
+            }
+            else
+            {
+                return new RedirectResult("/Account/Login");
+            }
+            
         }
 
         private bool UserExists(int id)
