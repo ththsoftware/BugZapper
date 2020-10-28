@@ -4,17 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BugZapper.Data;
 using Microsoft.EntityFrameworkCore;
+using MySQL.Data.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using BugZapper.Support;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace BugZapper
 {
@@ -30,11 +32,9 @@ namespace BugZapper
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options => {
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+            services.ConfigureSameSiteNoneCookies();
 
-            
+
 
             services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -89,7 +89,7 @@ namespace BugZapper
 
             services.AddControllersWithViews();
 
-            services.AddDbContext<BugZapperContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BugZapperContext")));
+            services.AddDbContext<BugZapperContext>(options => options.UseMySQL(Configuration.GetConnectionString("BugZapperContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -105,6 +105,11 @@ namespace BugZapper
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();

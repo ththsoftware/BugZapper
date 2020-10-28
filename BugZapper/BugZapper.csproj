@@ -23,6 +23,18 @@
     <Compile Remove="Migrations\20201018105723_SixthCreate.Designer.cs" />
     <Compile Remove="Migrations\20201018110240_SixthCreate.cs" />
     <Compile Remove="Migrations\20201018110240_SixthCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201018111139_InitialCreate.cs" />
+    <Compile Remove="Migrations\20201018111139_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201019070840_CreateTwo.cs" />
+    <Compile Remove="Migrations\20201019070840_CreateTwo.Designer.cs" />
+    <Compile Remove="Migrations\20201020102833_SecondUpdate.cs" />
+    <Compile Remove="Migrations\20201020102833_SecondUpdate.Designer.cs" />
+    <Compile Remove="Migrations\20201021060223_FirstFix.cs" />
+    <Compile Remove="Migrations\20201021060223_FirstFix.Designer.cs" />
+    <Compile Remove="Migrations\20201028040215_InitialCreate1.cs" />
+    <Compile Remove="Migrations\20201028040215_InitialCreate1.Designer.cs" />
+    <Compile Remove="Migrations\20201028045018_InitialCreate2.cs" />
+    <Compile Remove="Migrations\20201028045018_InitialCreate2.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +49,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+    <PackageReference Include="MySql.Data" Version="8.0.22" />
+    <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.22" />
   </ItemGroup>
 
 </Project>
